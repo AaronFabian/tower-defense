@@ -38,7 +38,7 @@ try {
 
 	// you can not pass the string, pass the html element instead
 	const image = new Image();
-	image.src = '../asset/gameMap.png';
+	image.src = '/asset/gameMap.png';
 	image.onload = () => {
 		animate();
 	};
