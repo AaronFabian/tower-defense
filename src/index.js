@@ -96,7 +96,7 @@ try {
 			explosion.draw();
 			explosion.update();
 
-			if (explosion.frames.current > explosion.frames.max - 1) {
+			if (explosion.frames.current >= explosion.frames.max - 1) {
 				explosions.splice(i, 1);
 			}
 		}
