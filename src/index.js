@@ -55,6 +55,10 @@ try {
 	};
 	window.addEventListener('keypress', keypressed, false);
 
+	document.getElementById('enterBtn').addEventListener('click', function () {
+		window.keypressed({ key: 'Enter' });
+	});
+
 	requestAnimationFrame(animate);
 } catch (error) {
 	console.error(error);

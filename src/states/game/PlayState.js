@@ -7,6 +7,7 @@ import Building from '../../classes/Building.js';
 import Sprite from '../../classes/Sprite.js';
 import GameOverState from './GameOverState.js';
 import newImage from '../../utils/newImage.js';
+import PauseState from './PauseState.js';
 
 class PlayState extends BaseState {
 	constructor() {
@@ -44,7 +45,7 @@ class PlayState extends BaseState {
 		this.currentWaves = 1;
 		this.enemyCount = 3;
 		this.hearts = 5;
-		this.coins = 100;
+		this.coins = 125;
 
 		// first wave
 		this.spawnEnemies(this.enemyCount);
@@ -96,6 +97,10 @@ class PlayState extends BaseState {
 		window.addEventListener('mousemove', this.handleMouseDown, false);
 	}
 
+	enter() {
+		this.bgSound = gSounds['field-battle'].play();
+	}
+
 	spawnEnemies(spawnCount) {
 		for (let i = 1; i < spawnCount + 1; i++) {
 			const xOffset = i * 150;
@@ -104,12 +109,21 @@ class PlayState extends BaseState {
 	}
 
 	update() {
+		if (window.wasPressed('Enter')) {
+			gSounds['pause-button-pressed'].stop();
+			gSounds['pause-button-pressed'].play();
+
+			gSounds['field-battle'].pause();
+			window.gStateStack.push(new PauseState());
+		}
+
 		for (let i = this.enemies.length - 1; i >= 0; i--) {
 			const enemy = this.enemies[i];
 			enemy.update();
 
 			// 100 is enemy height
 			if (enemy.position.y < -100) {
+				gSounds['player-get-hit'].play();
 				this.hearts -= 1;
 				this.enemies.splice(i, 1);
 				document.getElementById('hearts').innerHTML = this.hearts;
@@ -118,6 +132,7 @@ class PlayState extends BaseState {
 
 		if (this.hearts === 0) {
 			console.log('game over');
+			gSounds['field-battle'].stop();
 			window.gStateStack.push(new GameOverState());
 		}
 
@@ -135,6 +150,7 @@ class PlayState extends BaseState {
 
 		this.buildings.forEach(building => {
 			building.update();
+
 			building.target = null;
 			const validEnemies = this.enemies.filter(enemy => {
 				const xDifference = enemy.center.x - building.position.x;
@@ -171,6 +187,8 @@ class PlayState extends BaseState {
 					}
 
 					// remove the projectiles from game
+					gSounds['rock-break'].stop();
+					gSounds['rock-break'].play();
 					this.explosions.push(
 						new Sprite({
 							position: { x: projectile.position.x, y: projectile.position.y },
@@ -231,6 +249,7 @@ class PlayState extends BaseState {
 	}
 
 	exit() {
+		gSounds['field-battle'].stop();
 		canvas.removeEventListener('click', this.handleCanvasClick);
 		window.removeEventListener('mousemove', this.handleMouseDown);
 	}

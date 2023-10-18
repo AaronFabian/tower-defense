@@ -20,6 +20,10 @@ class StartState extends BaseState {
 		}, 1250); // more 250 give TWEEN time to finished
 	}
 
+	enter() {
+		gSounds['start-song'].play();
+	}
+
 	update() {
 		if (window.wasPressed('Enter'))
 			window.gStateStack.push(
@@ -52,6 +56,7 @@ class StartState extends BaseState {
 	}
 
 	exit() {
+		window.gSounds['start-song'].stop();
 		clearInterval(this.interval);
 		TWEEN.removeAll();
 	}

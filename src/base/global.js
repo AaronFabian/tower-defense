@@ -14,3 +14,26 @@ window.gTextures = {
 	['explosion']: newImage('/asset/explosion.png'),
 	['tower']: newImage('/asset/tower.png'),
 };
+
+window.gSounds = {
+	['start-song']: new Howl({
+		src: ['/sounds/start_song.mp3'],
+		loop: true,
+	}),
+	['pause-button-pressed']: new Howl({
+		src: ['/sounds/pause_effect.wav'],
+	}),
+	['player-get-hit']: new Howl({
+		src: ['/sounds/player_get_hit.mp3'],
+	}),
+	['rock-break']: new Howl({
+		src: ['/sounds/rock_break.ogg'],
+	}),
+	['field-battle']: new Howl({
+		src: ['/sounds/field_battle.wav'],
+		loop: true,
+	}),
+	['game-over']: new Howl({
+		src: ['/sounds/game_over.ogg'],
+	}),
+};
