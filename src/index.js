@@ -9,7 +9,7 @@ import Building from './classes/Building.js';
 import PlacementTile from './classes/PlacementTile.js';
 import Sprite from './classes/Sprite.js';
 
-import StateStack from './os/StateStack.js';
+import StateStack from '/src/os/StateStack.js';
 import StartState from './states/game/StartState.js';
 
 try {
@@ -233,7 +233,7 @@ try {
 	// });
 
 	window.keypressed = ({ key }) => {
-		if (key == 'escape') console.log('QUIT GAME');
+		if (key == 'q') console.log('Exit Game');
 
 		// console.log(key);
 
