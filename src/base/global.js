@@ -1,4 +1,4 @@
-// remove annoying browser extension error
+// remove annoying browser extension error only for dev purpose
 console.clear();
 
 window.canvas = document.getElementById('canvas');
