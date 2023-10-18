@@ -31,7 +31,7 @@ try {
 		window.gStateStack.render();
 	}
 
-	function animate() {
+	function animate(time) {
 		const animationID = requestAnimationFrame(animate);
 
 		const msNow = window.performance.now();
@@ -39,13 +39,15 @@ try {
 		if (elapsed < fpsInterval) return;
 		msPrev = msNow - (elapsed % fpsInterval);
 
+		TWEEN.update(time);
+
 		update();
 
 		render();
 	}
 
-	window.keypressed = ({ key }) => {
-		if (key == 'q') console.log('Exit Game');
+	window.keypressed = function ({ key }) {
+		if (key === 'q') console.log('Exit Game');
 
 		// console.log(key);
 
@@ -53,7 +55,7 @@ try {
 	};
 	window.addEventListener('keypress', keypressed, false);
 
-	animate();
+	requestAnimationFrame(animate);
 } catch (error) {
 	console.error(error);
 	document.title = 'FATAL ERROR';

@@ -3,7 +3,7 @@ import Sprite from './Sprite.js';
 
 class Enemy extends Sprite {
 	constructor({ position = { x: 0, y: 0 } }) {
-		super({ position, imageSrc: './asset/orc.png', frames: { max: 7 } });
+		super({ position, imageSrc: gTextures['orc'], frames: { max: 7 } });
 
 		this.width = 100;
 		this.height = 100;
@@ -21,7 +21,7 @@ class Enemy extends Sprite {
 	}
 
 	update() {
-		this.draw();
+		// this.draw();
 		super.update();
 
 		const wayPoint = wayPoints[this.wayPointIndex];

@@ -1,22 +1,34 @@
+import newImage from '../../utils/newImage.js';
 import BaseState from '../BaseState.js';
+import FadeInState from './FadeInState.js';
+import FadeOutState from './FadeOutState.js';
 import PlayState from './PlayState.js';
 
 class StartState extends BaseState {
 	constructor() {
 		super();
 
-		this.image = new Image();
-		this.image.src = '/asset/gameMap.png';
+		this.image = gTextures['game-map'];
+		this.opacity = 1;
+		this.blink = false;
 
-		this.handleKeyboardDown = event => {};
-		window.addEventListener('keypress', this.handleKeyboardDown, false);
+		this.interval = setInterval(() => {
+			new TWEEN.Tween(this)
+				.to({ opacity: this.blink ? 1 : 0 }, 1000)
+				.onComplete(() => (this.blink = !this.blink)) // "this" keyword slop to class
+				.start();
+		}, 1250); // more 250 give TWEEN time to finished
 	}
 
 	update() {
-		if (window.wasPressed('Enter')) {
-			window.gStateStack.pop();
-			window.gStateStack.push(new PlayState());
-		}
+		if (window.wasPressed('Enter'))
+			window.gStateStack.push(
+				new FadeInState({ r: 255, g: 255, b: 255 }, 1500, function () {
+					window.gStateStack.pop(); // this state
+					window.gStateStack.push(new PlayState());
+					window.gStateStack.push(new FadeOutState({ r: 255, g: 255, b: 255 }, 1500, function () {}));
+				})
+			);
 	}
 
 	render() {
@@ -35,12 +47,13 @@ class StartState extends BaseState {
 
 		ctx.font = '30px Comic Sans MS';
 		ctx.textAlign = 'center';
-		ctx.fillStyle = 'white';
+		ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
 		ctx.fillText('press enter to start the game', canvas.width / 2, canvas.height / 2 + 105);
 	}
 
 	exit() {
-		window.removeEventListener('keypress', this.handleKeyboardDown, false);
+		clearInterval(this.interval);
+		TWEEN.removeAll();
 	}
 }
 

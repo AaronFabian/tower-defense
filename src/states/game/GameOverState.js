@@ -1,4 +1,6 @@
 import BaseState from '../BaseState.js';
+import FadeInState from './FadeInState.js';
+import FadeOutState from './FadeOutState.js';
 import StartState from './StartState.js';
 
 class GameOverState extends BaseState {
@@ -11,9 +13,14 @@ class GameOverState extends BaseState {
 
 	update() {
 		if (window.wasPressed('Enter')) {
-			window.gStateStack.pop(); // GameOverState
-			window.gStateStack.pop(); // PlayState
-			window.gStateStack.push(new StartState());
+			window.gStateStack.push(
+				new FadeInState({ r: 255, g: 255, b: 255 }, 1500, function () {
+					window.gStateStack.pop(); // this state
+					window.gStateStack.pop(); // PlayState
+					window.gStateStack.push(new StartState());
+					window.gStateStack.push(new FadeOutState({ r: 255, g: 255, b: 255 }, 1500, function () {}));
+				})
+			);
 		}
 	}
 

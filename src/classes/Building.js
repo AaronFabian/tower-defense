@@ -3,7 +3,7 @@ import Sprite from './Sprite.js';
 
 class Building extends Sprite {
 	constructor({ position = { x: 0, y: 0 } }) {
-		super({ position, imageSrc: '/asset/tower.png', frames: { max: 19 }, offset: { x: 0, y: -80 } });
+		super({ position, imageSrc: gTextures['tower'], frames: { max: 19 }, offset: { x: 0, y: -80 } });
 		this.width = TILE_SIZE * 2;
 		this.height = TILE_SIZE;
 		this.center = {
@@ -30,7 +30,6 @@ class Building extends Sprite {
 	}
 
 	update() {
-		this.draw();
 		if (this.target || (!this.target && this.frames.current !== 0)) {
 			super.update();
 		}

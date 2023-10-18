@@ -6,13 +6,13 @@ import wayPoints from '../../base/wayPoints.js';
 import Building from '../../classes/Building.js';
 import Sprite from '../../classes/Sprite.js';
 import GameOverState from './GameOverState.js';
+import newImage from '../../utils/newImage.js';
 
 class PlayState extends BaseState {
 	constructor() {
 		super();
 
-		this.image = new Image();
-		this.image.src = '/asset/gameMap.png';
+		this.image = gTextures['game-map'];
 
 		const placementTilesData2D = [];
 		for (let i = 0; i < placementTilesData.length; i += 20) {
@@ -41,8 +41,9 @@ class PlayState extends BaseState {
 		this.buildings = [];
 		this.explosions = [];
 		this.activeTile = undefined;
+		this.currentWaves = 1;
 		this.enemyCount = 3;
-		this.hearts = 2;
+		this.hearts = 5;
 		this.coins = 100;
 
 		// first wave
@@ -54,7 +55,6 @@ class PlayState extends BaseState {
 		};
 
 		this.handleCanvasClick = event => {
-			console.log(event);
 			if (this.activeTile && !this.activeTile.isOccupied && this.coins - 50 >= 0) {
 				this.coins -= 50;
 				document.getElementById('coins').innerHTML = this.coins;
@@ -103,9 +103,7 @@ class PlayState extends BaseState {
 		}
 	}
 
-	render() {
-		ctx.drawImage(this.image, 0, 0);
-
+	update() {
 		for (let i = this.enemies.length - 1; i >= 0; i--) {
 			const enemy = this.enemies[i];
 			enemy.update();
@@ -115,26 +113,17 @@ class PlayState extends BaseState {
 				this.hearts -= 1;
 				this.enemies.splice(i, 1);
 				document.getElementById('hearts').innerHTML = this.hearts;
-
-				if (this.hearts === 0) {
-					console.log('game over');
-					// cancelAnimationFrame(animationID);
-					// document.getElementById('gameOver').style.display = 'flex';
-					window.gStateStack.push(new GameOverState());
-				}
 			}
 		}
 
-		// tracking total amount of enemies
-		if (this.enemies.length === 0) {
-			this.enemyCount += 2;
-			this.spawnEnemies(this.enemyCount);
+		if (this.hearts === 0) {
+			console.log('game over');
+			window.gStateStack.push(new GameOverState());
 		}
 
 		// explosions
 		for (let i = this.explosions.length - 1; i >= 0; i--) {
 			const explosion = this.explosions[i];
-			explosion.draw();
 			explosion.update();
 
 			if (explosion.frames.current >= explosion.frames.max - 1) {
@@ -185,7 +174,7 @@ class PlayState extends BaseState {
 					this.explosions.push(
 						new Sprite({
 							position: { x: projectile.position.x, y: projectile.position.y },
-							imageSrc: '/asset/explosion.png',
+							imageSrc: gTextures['explosion'],
 							frames: { max: 4 },
 							offset: { x: 0, y: 0 },
 						})
@@ -195,10 +184,53 @@ class PlayState extends BaseState {
 				}
 			}
 		});
+
+		// tracking total amount of enemies if 0 then go next waves
+		if (this.enemies.length === 0) {
+			this.currentWaves++;
+			this.enemyCount += 2;
+			this.spawnEnemies(this.enemyCount);
+		}
+	}
+
+	render() {
+		ctx.drawImage(this.image, 0, 0);
+
+		for (let i = this.enemies.length - 1; i >= 0; i--) {
+			const enemy = this.enemies[i];
+			enemy.draw();
+		}
+
+		for (let i = this.explosions.length - 1; i >= 0; i--) {
+			const explosion = this.explosions[i];
+			explosion.draw();
+		}
+
+		for (let i = 0; i <= this.placementTiles.length - 1; i++) {
+			const tile = this.placementTiles[i];
+			tile.draw();
+		}
+
+		for (let i = 0; i <= this.buildings.length - 1; i++) {
+			const building = this.buildings[i];
+			building.draw();
+
+			for (let i = building.projectiles.length - 1; i >= 0; i--) {
+				const projectile = building.projectiles[i];
+				projectile.draw();
+			}
+		}
+
+		ctx.font = 'bold 30px Comic Sans MS';
+		ctx.fillStyle = 'black';
+		ctx.lineWidth = 5;
+		ctx.strokeText('Waves : ' + this.currentWaves, 10, 32);
+
+		ctx.fillStyle = 'white';
+		ctx.fillText('Waves : ' + this.currentWaves, 10, 32);
 	}
 
 	exit() {
-		console.log('exit');
 		canvas.removeEventListener('click', this.handleCanvasClick);
 		window.removeEventListener('mousemove', this.handleMouseDown);
 	}

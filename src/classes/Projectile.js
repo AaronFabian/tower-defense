@@ -1,23 +1,23 @@
+import newImage from '../utils/newImage.js';
 import Sprite from './Sprite.js';
 
 class Projectile extends Sprite {
 	constructor({ position = { x: 0, y: 0 }, enemy }) {
-		super({ position, imageSrc: '/asset/projectile.png' });
+		super({ position, imageSrc: gTextures['projectile'] });
 		this.velocity = {
 			x: 0,
 			y: 0,
 		};
 		this.enemy = enemy;
 		this.radius = 10;
-		this.image = new Image();
-		this.image.src = '/asset/projectile.png';
+		this.image = newImage('/asset/projectile.png');
 	}
 
 	update() {
-		this.draw();
+		// this.draw();
 
 		const angle = Math.atan2(this.enemy.center.y - this.position.y, this.enemy.center.x - this.position.x);
-		const power = 2;
+		const power = 4;
 
 		this.velocity.x = Math.cos(angle) * power;
 		this.velocity.y = Math.sin(angle) * power;

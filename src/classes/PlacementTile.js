@@ -7,8 +7,6 @@ class PlacementTile {
 	}
 
 	update(mouse) {
-		this.draw();
-
 		if (
 			mouse.x > this.position.x &&
 			mouse.x < this.position.x + this.size &&
